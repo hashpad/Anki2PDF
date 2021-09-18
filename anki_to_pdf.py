@@ -4,10 +4,12 @@ import sys
 
 def bold(text):
     return ('<span style="font-weight: bold; font-size: 20px; padding-bottom: 5px; display: block; border-bottom: 1px solid gray;">{}</span>'.format(text))
+
 def fix_img_srcs(text):
     pattern = re.compile(r"<img src='((.)*)' \/>")
     ret = re.sub(pattern, r"<img src='" + os.environ['HOME'] + r"/.local/share/Anki2/User%201/collection.media/\1' />", text)
     return ret
+
 def main():
     with open(sys.argv[1], "r") as doc:
         pattern = re.compile(r"^\"(((\n)*((?!\").)*(\n)*)*)\";\"(((\n)*(((?!\").)*)(\n)*)*)\"$", re.MULTILINE | re.DOTALL)
@@ -22,7 +24,7 @@ def main():
             content+= div_def + front + back + end_div
     with open("/tmp/tmp_anki_html_file.html", "w") as out:
         out.write(content)
-    os.system("wkhtmltopdf /tmp/tmp_anki_html_file.html " + sys.argv[2] + " && rm -f /tmp/tmp_anki_html_file.html")
+    os.system("wkhtmltopdf --enable-local-file-access /tmp/tmp_anki_html_file.html " + sys.argv[2] + " && rm -f /tmp/tmp_anki_html_file.html")
 
 if __name__ == '__main__':
     main()
